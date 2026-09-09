@@ -1,0 +1,10 @@
+node_modules/
+frontend/node_modules/
+backend/vendor/
+.env
+.env.*
+!.env.example
+*.log
+.vscode/
+dist/
+frontend/dist/

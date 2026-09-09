@@ -1,0 +1,4 @@
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { skillService } from '../../services/skillService';
+export default function EmployeeSkills() { const { employeeId } = useParams(); const [skills, setSkills] = useState<any[]>([]); useEffect(() => { if (employeeId) skillService.employeeSkills(employeeId).then(response => setSkills(response.data.data ?? [])); }, [employeeId]); return <section className="space-y-4"><h1 className="text-2xl font-bold">Employee Skills</h1>{skills.length === 0 ? <p>No skills assigned.</p> : skills.map(item => <div className="rounded bg-white p-4 shadow" key={item.id}><strong>{item.skill?.skill_name}</strong><span className="ml-4">{item.current_level} to {item.target_level}</span><span className="ml-4">{item.progress_percentage}%</span></div>)}</section>; }

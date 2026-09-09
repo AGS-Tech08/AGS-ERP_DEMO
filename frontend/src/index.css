@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+.invoice-paper { width: 794px; min-height: 1123px; box-sizing: border-box; margin: 0 auto; padding: 32px; background: white; color: #172033; font: 12px/1.45 Georgia, serif; }
+.invoice-header { display: flex; align-items: flex-start; gap: 18px; border-bottom: 2px solid #172033; padding-bottom: 18px; }
+.invoice-customer { margin: 18px 0; padding: 12px; border: 1px solid #cbd5e1; }
+.invoice-items { width: 100%; border-collapse: collapse; }
+.invoice-items th, .invoice-items td { border: 1px solid #cbd5e1; padding: 7px; text-align: left; }
+.invoice-items th { background: #e2e8f0; font-weight: 700; }
+.invoice-totals { margin: 18px 0 0 auto; width: 270px; border-top: 2px solid #172033; padding-top: 8px; text-align: right; }
+.invoice-totals div, .invoice-totals strong { display: block; padding: 3px 0; }
+.invoice-modern-erp-invoice { font-family: ui-sans-serif, system-ui, sans-serif; }
+.invoice-modern-erp-invoice .invoice-header { border-color: #2563eb; }
+.invoice-modern-erp-invoice .invoice-items th { background: #dbeafe; color: #1e3a8a; }
+.invoice-compact-tax-invoice { padding: 24px; font-size: 10px; }
+.invoice-compact-tax-invoice .invoice-header { padding-bottom: 10px; }
+@media print { .invoice-paper { width: 100%; min-height: auto; margin: 0; box-shadow: none; } .invoice-items thead { display: table-header-group; } .invoice-items tr { break-inside: avoid; } }

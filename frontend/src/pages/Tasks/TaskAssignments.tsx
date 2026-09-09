@@ -1,0 +1,2 @@
+import { useParams } from 'react-router-dom';
+export default function TaskAssignments() { const { id } = useParams(); return <section><h1 className="text-2xl font-bold">Task Assignments</h1><p className="mt-2 text-gray-500">Assignments for task {id}</p></section>; }

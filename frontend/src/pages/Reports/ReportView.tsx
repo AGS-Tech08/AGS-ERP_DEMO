@@ -1,0 +1,11 @@
+import { useEffect, useState } from 'react';
+import { reportService } from '../../services/reportService';
+
+type Props = { title: string; endpoint: keyof typeof reportService; summary?: boolean };
+
+export default function ReportView({ title, endpoint, summary = false }: Props) {
+  const [data, setData] = useState<any>(null); const [loading, setLoading] = useState(true); const [error, setError] = useState('');
+  useEffect(() => { setLoading(true); setError(''); reportService[endpoint]().then(response => setData(response.data)).catch(() => setError('Unable to load this report.')).finally(() => setLoading(false)); }, [endpoint]);
+  const rows = Array.isArray(data?.data) ? data.data : Array.isArray(data?.data?.data) ? data.data.data : [];
+  return <section className="space-y-5"><div><h1 className="text-3xl font-bold">{title}</h1><p className="text-gray-500">Live data from AGS ERP transactions</p></div>{loading && <p>Loading report...</p>}{error && <p className="rounded bg-red-50 p-3 text-red-700">{error}</p>}{!loading && !error && summary && data?.data && typeof data.data === 'object' && !Array.isArray(data.data) && <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{Object.entries(data.data).map(([key, value]) => <div className="rounded bg-white p-5 shadow" key={key}><p className="text-sm capitalize text-gray-500">{key.replaceAll('_', ' ')}</p><p className="mt-2 text-2xl font-bold">{String(value ?? 0)}</p></div>)}</div>}{!loading && !summary && (rows.length === 0 ? <p className="rounded bg-white p-6">No report records found.</p> : <div className="overflow-x-auto rounded bg-white shadow"><table className="min-w-full text-left"><thead><tr className="border-b">{Object.keys(rows[0]).slice(0, 8).map(key => <th className="p-3 capitalize" key={key}>{key.replaceAll('_', ' ')}</th>)}</tr></thead><tbody>{rows.map((row: any, index: number) => <tr className="border-b" key={row.id ?? index}>{Object.keys(rows[0]).slice(0, 8).map(key => <td className="p-3" key={key}>{String(row[key] ?? '-')}</td>)}</tr>)}</tbody></table></div>)}</section>;
+}

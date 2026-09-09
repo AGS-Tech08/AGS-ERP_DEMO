@@ -10,34 +10,49 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
         ]);
 
-        if (!Auth::attempt($credentials)) {
+        if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
+                'success' => false,
                 'message' => 'Invalid email or password'
             ], 401);
         }
 
         $user = Auth::user();
 
-        $token = $user->createToken('ags-erp')->plainTextToken;
+        // Delete old tokens
+        $user->tokens()->delete();
+
+        // Create new token
+        $token = $user->createToken('AGS-ERP')->plainTextToken;
 
         return response()->json([
-            'message' => 'Login Successful',
+            'success' => true,
+            'message' => 'Login successful',
             'token' => $token,
             'user' => $user
         ]);
     }
 
+    public function profile(Request $request)
+    {
+        return response()->json([
+            'success' => true,
+            'user' => $request->user()
+        ]);
+    }
+
     public function logout(Request $request)
     {
-        $request->user()?->currentAccessToken()?->delete();
+        $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'Logout Successful'
+            'success' => true,
+            'message' => 'Logged out successfully'
         ]);
     }
 }

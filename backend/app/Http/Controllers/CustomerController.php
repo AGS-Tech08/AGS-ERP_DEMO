@@ -9,21 +9,56 @@ use Illuminate\Http\Request;
 class CustomerController extends Controller
 {
     /**
-     * Display all customers.
+     * Customer List
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(
-            Customer::latest()->paginate(10)
-        );
+        $query = Customer::query();
+
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('customer_code', 'like', "%{$search}%")
+                    ->orWhere('company_name', 'like', "%{$search}%")
+                    ->orWhere('contact_person', 'like', "%{$search}%")
+                    ->orWhere('mobile', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+
+            });
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $query->latest()->paginate(10)
+        ]);
     }
 
     /**
-     * Store a new customer.
+     * Create Customer
      */
     public function store(StoreCustomerRequest $request)
     {
-        $customer = Customer::create($request->validated());
+        $lastCustomer = Customer::latest('id')->first();
+
+        if ($lastCustomer) {
+            $number = (int) substr($lastCustomer->customer_code, 3);
+            $number++;
+        } else {
+            $number = 1;
+        }
+
+        $customerCode = 'AGS' . str_pad($number, 6, '0', STR_PAD_LEFT);
+
+        $customer = Customer::create(array_merge(
+            $request->validated(),
+            [
+                'customer_code' => $customerCode,
+                'customer_status' => 'Active'
+            ]
+        ));
 
         return response()->json([
             'success' => true,
@@ -33,15 +68,18 @@ class CustomerController extends Controller
     }
 
     /**
-     * Display one customer.
+     * View Customer
      */
     public function show(Customer $customer)
     {
-        return response()->json($customer);
+        return response()->json([
+            'success' => true,
+            'data' => $customer
+        ]);
     }
 
     /**
-     * Update customer.
+     * Update Customer
      */
     public function update(Request $request, Customer $customer)
     {
@@ -64,7 +102,7 @@ class CustomerController extends Controller
     }
 
     /**
-     * Delete customer.
+     * Delete Customer
      */
     public function destroy(Customer $customer)
     {

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,12 +14,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::updateOrCreate(
-            ['email' => 'admin@agserp.com'],
+        // Create Roles & Permissions
+        $this->call(RolesAndPermissionsSeeder::class);
+        $this->call(InvoiceTemplateSeeder::class);
+
+        // Create Admin User
+        $admin = User::updateOrCreate(
+            ['email' => 'admin@ags.com'],
             [
-                'name' => 'AGS ERP Admin',
+                'name' => 'Super Admin',
                 'password' => Hash::make('Admin@123'),
             ]
         );
+
+        // Assign Super Admin Role
+        $admin->assignRole('Super Admin');
     }
 }

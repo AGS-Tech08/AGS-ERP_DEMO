@@ -1,21 +1,30 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:8000/api",
-    headers: {
-        Accept: "application/json",
-    },
+  baseURL: "http://127.0.0.1:8000/api",
+  headers: {
+    Accept: "application/json",
+  },
 });
 
 api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
 
-    const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
 
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+  /*
+   * Do not force application/json for FormData uploads.
+   * Browser/Axios must generate the correct multipart boundary.
+   */
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  } else {
+    config.headers["Content-Type"] = "application/json";
+  }
 
-    return config;
+  return config;
 });
 
 export default api;

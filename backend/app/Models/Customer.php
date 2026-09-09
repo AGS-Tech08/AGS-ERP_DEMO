@@ -35,4 +35,57 @@ class Customer extends Model
         'created_by',
         'updated_by',
     ];
+
+    protected $casts = [
+        'credit_limit' => 'decimal:2',
+        'latitude' => 'decimal:8',
+        'longitude' => 'decimal:8',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sales
+    |--------------------------------------------------------------------------
+    */
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sale Payments
+    |--------------------------------------------------------------------------
+    */
+
+    public function salePayments()
+    {
+        return $this->hasMany(SalePayment::class);
+    }
+
+    public function amcs()
+    {
+        return $this->hasMany(Amc::class);
+    }
+
+    public function assets()
+    {
+        return $this->hasMany(Asset::class);
+    }
+
+    public function rewardAccount()
+    {
+        return $this->hasOne(RewardAccount::class);
+    }
+
+    public function rewardTransactions()
+    {
+        return $this->hasMany(RewardTransaction::class);
+    }
+
+    public function services()
+    {
+        return $this->hasMany(Service::class);
+    }
 }
